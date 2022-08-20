@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"math/rand"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -16,15 +16,15 @@ func newBus(id int) bus {
 }
 
 type bus struct {
-	id int
+	Id int
 	s2.Point
 }
 
-func (b bus) Id() string {
-	return fmt.Sprintf("bus %v", b.id)
-}
-
 func (b bus) Report(client mqtt.Client) {
-	token := client.Publish("bus/positions", 0, false, fmt.Sprintf("id: %v, coord: %+v", b.id, b.Vector))
+	body, err := json.Marshal(b)
+	if err != nil {
+		panic("Bad bus struct")
+	}
+	token := client.Publish("bus/positions", 0, false, body)
 	token.Wait()
 }
