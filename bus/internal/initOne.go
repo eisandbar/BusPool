@@ -19,5 +19,4 @@ func InitOne(client mqtt.Client, r Reportable, tick <-chan time.Time) {
 
 type Reportable interface {
 	Report(mqtt.Client)
-	Id() string
 }
