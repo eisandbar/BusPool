@@ -61,11 +61,14 @@ func (r rhino) positionHandler(client mqtt.Client, msg mqtt.Message) {
 	if err != nil {
 		panic("Bad payload in mqtt topic")
 	}
+	latlng := s2.LatLngFromPoint(mBus.Point)
 
 	// Transform data for later consumers
 	kBus := kafkaBus{
-		Id:       mBus.Id,
-		Location: struct{ s2.LatLng }{s2.LatLngFromPoint(mBus.Point)},
+		Id: mBus.Id,
+		Location: GeoPoint{
+			Lat: latlng.Lat.Degrees(), Lon: latlng.Lng.Degrees(), Type: "geo_point",
+		},
 	}
 	body, err := json.Marshal(kBus)
 
@@ -90,7 +93,11 @@ type mqttBus struct {
 
 type kafkaBus struct {
 	Id       int
-	Location struct {
-		s2.LatLng
-	}
+	Location GeoPoint `json:"location"`
+}
+
+type GeoPoint struct {
+	Type string  `json:"type"`
+	Lat  float64 `json:"lat"`
+	Lon  float64 `json:"lon"`
 }
