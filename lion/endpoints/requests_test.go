@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/eisandbar/BusPool/lion/bus"
 	"github.com/eisandbar/BusPool/lion/endpoints"
 	"github.com/eisandbar/BusPool/lion/types"
 	"github.com/golang/geo/s2"
@@ -27,7 +28,7 @@ func TestRequestPost(t *testing.T) {
 	response := httptest.NewRecorder()
 
 	rs := endpoints.RequestServer{
-		BusStore: mockBusStore(id),
+		BusStore: mockBusStore(bus.Bus{Id: id}),
 		Pub:      &pub,
 	}
 	rs.RequestPost(response, request)
@@ -39,18 +40,22 @@ func TestRequestPost(t *testing.T) {
 	assert.Equal(t, point, pub.points[0])
 }
 
-type mockBusStore int
+type mockBusStore bus.Bus
 
-func (bs mockBusStore) FindBus(point types.GeoPoint) int {
-	return int(bs)
+func (bs mockBusStore) FindBus(point types.GeoPoint) bus.Bus {
+	return bus.Bus(bs)
+}
+
+func (bs mockBusStore) Store(bus bus.Bus) {
+
 }
 
 type mockPublisher struct {
 	calls  []int
-	points []types.GeoPoint
+	points []string
 }
 
-func (pub *mockPublisher) Publish(point types.GeoPoint, id int) {
-	pub.calls = append(pub.calls, id)
-	pub.points = append(pub.points, point)
+func (pub *mockPublisher) Publish(bus bus.Bus, points string) {
+	pub.calls = append(pub.calls, bus.Id)
+	pub.points = append(pub.points, points)
 }

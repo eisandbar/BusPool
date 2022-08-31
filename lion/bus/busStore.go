@@ -8,7 +8,8 @@ import (
 )
 
 type BusStore interface {
-	FindBus(point types.GeoPoint) int
+	FindBus(point types.GeoPoint) Bus
+	Store(Bus)
 }
 
 type Bus struct {
@@ -17,26 +18,34 @@ type Bus struct {
 }
 
 type MemoryBusStore struct {
-	bus []Bus
+	bus map[int]Bus
 	sync.RWMutex
 }
 
-// Init bus slice mostly for testing
-func (bs *MemoryBusStore) Init(bus []Bus) {
-	bs.bus = bus
+func NewMemoryBusStore() *MemoryBusStore {
+	bs := MemoryBusStore{}
+	bs.bus = make(map[int]Bus)
+	return &bs
+}
+
+// Store bus data
+func (bs *MemoryBusStore) Store(bus Bus) {
+	bs.Lock()
+	defer bs.Unlock()
+	bs.bus[bus.Id] = bus
 }
 
 // Find bus goes over the list of buses and finds the nearest one
-func (bs *MemoryBusStore) FindBus(point types.GeoPoint) int {
+func (bs *MemoryBusStore) FindBus(point types.GeoPoint) Bus {
 	bs.RLock()
 	defer bs.RUnlock()
-	id, dist := bs.bus[0].Id, point.Distance(bs.bus[0].Location.LatLng).Abs().Degrees()
+	res, dist := bs.bus[0], point.Distance(bs.bus[0].Location.LatLng).Abs()
 	for _, bus := range bs.bus {
-		fmt.Println(dist, point.Distance(bus.Location.LatLng).Abs().Degrees())
-		if point.Distance(bus.Location.LatLng).Abs().Degrees() < dist {
-			id = bus.Id
-			dist = point.Distance(bus.Location.LatLng).Abs().Degrees()
+		fmt.Println(dist, point.Distance(bus.Location.LatLng).Abs())
+		if point.Distance(bus.Location.LatLng).Abs() < dist {
+			res = bus
+			dist = point.Distance(bus.Location.LatLng).Abs()
 		}
 	}
-	return id
+	return res
 }

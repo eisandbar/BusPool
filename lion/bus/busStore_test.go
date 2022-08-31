@@ -10,13 +10,15 @@ import (
 )
 
 func TestFindBus(t *testing.T) {
-	bs := bus.MemoryBusStore{}
+	bs := bus.NewMemoryBusStore()
 	buses := []bus.Bus{
 		{Id: 1, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(19, 13)}},
 		{Id: 2, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(21, 15)}},
 		{Id: 3, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(22, 22)}},
 	}
-	bs.Init(buses)
+	for _, bus := range buses {
+		bs.Store(bus)
+	}
 
 	testData := []struct {
 		point types.GeoPoint
