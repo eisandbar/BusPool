@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"sync"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -59,7 +59,7 @@ func (r rhino) positionHandler(client mqtt.Client, msg mqtt.Message) {
 	var mBus mqttBus
 	err := json.Unmarshal(msg.Payload(), &mBus)
 	if err != nil {
-		panic("Bad payload in mqtt topic")
+		log.Fatalf("Failed to unmarshal payload from mqtt topic, %s\n", msg.Payload())
 	}
 	latlng := s2.LatLngFromPoint(mBus.Point)
 
@@ -71,6 +71,9 @@ func (r rhino) positionHandler(client mqtt.Client, msg mqtt.Message) {
 		},
 	}
 	body, err := json.Marshal(kBus)
+	if err != nil {
+		log.Fatalf("Failed to marshal kafkaBus, %+v\n", kBus)
+	}
 
 	// Adding data to kafka topic
 	var wg sync.WaitGroup
@@ -79,7 +82,7 @@ func (r rhino) positionHandler(client mqtt.Client, msg mqtt.Message) {
 	r.client.Produce(r.ctx, record, func(_ *kgo.Record, err error) {
 		defer wg.Done()
 		if err != nil {
-			fmt.Printf("record had a produce error: %v\n", err)
+			log.Fatalf("record had a produce error: %v\n", err)
 		}
 
 	})
