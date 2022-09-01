@@ -31,6 +31,6 @@ func TestFindBus(t *testing.T) {
 	}
 
 	for _, tt := range testData {
-		assert.Equal(t, tt.id, bs.FindBus(tt.point))
+		assert.Equal(t, tt.id, bs.FindBus(tt.point).Id)
 	}
 }
