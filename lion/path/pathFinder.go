@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/eisandbar/BusPool/lion/bus"
@@ -31,7 +30,7 @@ func (pf DumbPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, err
 		return "", errors.New("Failed to get directions from GraphHopper")
 	}
 	var res response
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	fmt.Printf("%+v\n %s", resp, body)
 	if err != nil {
