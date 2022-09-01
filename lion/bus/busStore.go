@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/eisandbar/BusPool/lion/types"
+	"github.com/golang/geo/s2"
 )
 
 type BusStore interface {
@@ -15,6 +16,7 @@ type BusStore interface {
 type Bus struct {
 	Id       int
 	Location types.GeoPoint
+	Points   []s2.LatLng
 }
 
 type MemoryBusStore struct {
