@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/eisandbar/BusPool/lion/bus"
@@ -22,22 +23,21 @@ func TestRequestPost(t *testing.T) {
 	body, err := json.Marshal(point)
 	assert.NoError(t, err)
 
-	reader := bytes.NewReader(body)
-
-	request, _ := http.NewRequest(http.MethodPost, "/requests", reader)
+	request, _ := http.NewRequest(http.MethodPost, "/requests", bytes.NewBuffer(body))
 	response := httptest.NewRecorder()
 
 	rs := endpoints.RequestServer{
-		BusStore: mockBusStore(bus.Bus{Id: id}),
-		Pub:      &pub,
+		BusStore:   mockBusStore(bus.Bus{Id: id}),
+		PathFinder: mockPathFinder{},
+		Pub:        &pub,
 	}
 	rs.RequestPost(response, request)
 
 	assert.Equal(t, 1, len(pub.calls))
-	assert.Equal(t, 1, len(pub.points))
+	assert.Equal(t, 1, len(pub.paths))
 
 	assert.Equal(t, id, pub.calls[0])
-	assert.Equal(t, point, pub.points[0])
+	assert.Equal(t, strconv.Itoa(id), pub.paths[0])
 }
 
 type mockBusStore bus.Bus
@@ -50,12 +50,19 @@ func (bs mockBusStore) Store(bus bus.Bus) {
 
 }
 
-type mockPublisher struct {
-	calls  []int
-	points []string
+type mockPathFinder struct {
 }
 
-func (pub *mockPublisher) Publish(bus bus.Bus, points string) {
+func (pf mockPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, error) {
+	return strconv.Itoa(bus.Id), nil
+}
+
+type mockPublisher struct {
+	calls []int
+	paths []string
+}
+
+func (pub *mockPublisher) Publish(bus bus.Bus, path string) {
 	pub.calls = append(pub.calls, bus.Id)
-	pub.points = append(pub.points, points)
+	pub.paths = append(pub.paths, path)
 }

@@ -27,6 +27,9 @@ func (rs RequestServer) RequestPost(w http.ResponseWriter, r *http.Request) {
 
 	}
 	bus := rs.BusStore.FindBus(point)
-	path := rs.PathFinder.GetPath(bus, point)
+	path, err := rs.PathFinder.GetPath(bus, point)
+	if err != nil {
+
+	}
 	rs.Pub.Publish(bus, path)
 }

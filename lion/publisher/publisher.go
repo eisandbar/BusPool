@@ -1,7 +1,9 @@
 package publisher
 
-import "github.com/eisandbar/BusPool/lion/types"
+import (
+	"github.com/eisandbar/BusPool/lion/bus"
+)
 
 type Publisher interface {
-	Publish(point types.GeoPoint, id int)
+	Publish(bus.Bus, string)
 }
