@@ -14,7 +14,7 @@ import (
 func TestGetPath(t *testing.T) {
 	pf := path.DumbPathFinder{}
 	testBus := bus.Bus{
-		Points: []s2.LatLng{s2.LatLngFromDegrees(52.52, 13.37)},
+		Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(52.52, 13.37)},
 	}
 	point := types.GeoPoint{LatLng: s2.LatLngFromDegrees(52.5, 13.4)}
 

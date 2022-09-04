@@ -32,7 +32,6 @@ func (pf DumbPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, err
 	var res response
 	body, err := io.ReadAll(resp.Body)
 
-	fmt.Printf("%+v\n %s", resp, body)
 	if err != nil {
 		return "", errors.New("Failed to read response body")
 	}
@@ -47,7 +46,8 @@ func (pf DumbPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, err
 }
 
 func generateRequest(bus bus.Bus, point types.GeoPoint) io.Reader {
-	points := make([][]float64, 0, len(bus.Points)+1)
+	points := make([][]float64, 0, len(bus.Points)+2)
+	points = append(points, []float64{bus.Location.Lng.Degrees(), bus.Location.Lat.Degrees()})
 	for _, p := range bus.Points {
 		points = append(points, []float64{p.Lng.Degrees(), p.Lat.Degrees()})
 	}
