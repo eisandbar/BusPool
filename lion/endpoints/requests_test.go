@@ -69,8 +69,11 @@ func TestRequestPostFail(t *testing.T) {
 
 type mockBusStore bus.Bus
 
-func (bs mockBusStore) FindBus(point types.GeoPoint) bus.Bus {
-	return bus.Bus(bs)
+func (bs mockBusStore) FindBus(point types.GeoPoint) (bus.Bus, error) {
+	if point.LatLng.Lat == -1 {
+		return bus.Bus{}, errors.New("No buses available")
+	}
+	return bus.Bus(bs), nil
 }
 
 func (bs mockBusStore) Store(bus bus.Bus) {
@@ -82,7 +85,7 @@ type mockPathFinder struct {
 
 func (pf mockPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, error) {
 	if point.LatLng.Lat == -1 {
-		return "", errors.New("Bad ID")
+		return "", errors.New("Couldn't find path")
 	}
 	return strconv.Itoa(bus.Id), nil
 }

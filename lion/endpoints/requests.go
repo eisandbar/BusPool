@@ -27,7 +27,13 @@ func (rs RequestServer) RequestPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	bus := rs.BusStore.FindBus(point)
+
+	bus, err := rs.BusStore.FindBus(point)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	path, err := rs.PathFinder.GetPath(bus, point)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

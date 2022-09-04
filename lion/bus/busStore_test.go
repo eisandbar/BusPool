@@ -11,6 +11,10 @@ import (
 
 func TestFindBus(t *testing.T) {
 	bs := bus.NewMemoryBusStore()
+
+	_, err := bs.FindBus(types.GeoPoint{})
+	assert.Error(t, err)
+
 	buses := []bus.Bus{
 		{Id: 1, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(19, 13)}},
 		{Id: 2, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(21, 15)}},
@@ -31,6 +35,8 @@ func TestFindBus(t *testing.T) {
 	}
 
 	for _, tt := range testData {
-		assert.Equal(t, tt.id, bs.FindBus(tt.point).Id)
+		bus, err := bs.FindBus(tt.point)
+		assert.NoError(t, err)
+		assert.Equal(t, tt.id, bus.Id)
 	}
 }
