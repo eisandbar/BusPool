@@ -94,12 +94,14 @@ services:
 
   graphHopper:
     image: israelhikingmap/graphhopper
-    command: [
-      "--url", "https://download.geofabrik.de/europe/germany/berlin-latest.osm.pbf",
-      "--host", "0.0.0.0"
-    ]
+    container_name: graph
+    command: --host 0.0.0.0
+    volumes:
+      - ./graphhopper/maps:/graphhopper/maps
     ports:
       - 8989:8989
+    environment:
+      - FILE=maps/data.pbf
 
 volumes:
   esdata:
