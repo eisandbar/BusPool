@@ -4,6 +4,8 @@ go 1.19
 
 require (
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
+	github.com/gorilla/mux v1.8.0
+	github.com/rs/cors v1.8.2
 	github.com/stretchr/testify v1.8.0
 	github.com/twmb/franz-go v1.7.0
 )
