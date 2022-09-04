@@ -23,7 +23,8 @@ func NewSubscriber(bs bus.BusStore, topic, group string) (Subscriber, error) {
 	// Creating new client
 	cl, err := kgo.NewClient(
 		kgo.SeedBrokers(seeds...),
-		kgo.ConsumerGroup(group),
+		// Rebalancing groups takes too long for dev
+		// kgo.ConsumerGroup(group),
 		kgo.ConsumeTopics(topic),
 	)
 
@@ -38,8 +39,8 @@ func NewSubscriber(bs bus.BusStore, topic, group string) (Subscriber, error) {
 }
 
 // Subscribes to kafka topic and populates bus store
-func (sub Subscriber) Subscribe() {
-	fmt.Println("Subscribing to topic")
+func (sub Subscriber) Subscribe(topic string) {
+	fmt.Println("Subscribing to topic:", topic)
 	ctx := context.Background()
 	for {
 		fetches := sub.client.PollFetches(ctx)
@@ -52,8 +53,9 @@ func (sub Subscriber) Subscribe() {
 			p.EachRecord(func(record *kgo.Record) {
 				bus := bus.Bus{}
 				err := json.Unmarshal(record.Value, &bus)
-				if err != nil || bus.Location.Lng == 0 {
-					panic(fmt.Sprintf("%s, %+v", err, bus))
+				if err != nil {
+					fmt.Printf("Error unmarshalling bus: %s, %+v\n", err, bus)
+					return
 				}
 				sub.bs.Store(bus)
 			})
