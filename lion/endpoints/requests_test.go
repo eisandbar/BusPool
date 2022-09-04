@@ -3,6 +3,7 @@ package endpoints_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -32,12 +33,38 @@ func TestRequestPost(t *testing.T) {
 		Pub:        &pub,
 	}
 	rs.RequestPost(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
 
 	assert.Equal(t, 1, len(pub.calls))
 	assert.Equal(t, 1, len(pub.paths))
 
 	assert.Equal(t, id, pub.calls[0])
 	assert.Equal(t, strconv.Itoa(id), pub.paths[0])
+}
+
+func TestRequestPostFail(t *testing.T) {
+
+	rs := endpoints.RequestServer{
+		BusStore:   mockBusStore(bus.Bus{Id: 0}),
+		PathFinder: mockPathFinder{},
+		Pub:        &mockPublisher{},
+	}
+	t.Run("Bad request", func(t *testing.T) {
+		body, err := json.Marshal(struct{ BadField int }{2})
+		assert.NoError(t, err)
+		request, _ := http.NewRequest(http.MethodPost, "/requests", bytes.NewBuffer(body))
+		response := httptest.NewRecorder()
+		rs.RequestPost(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+	t.Run("Failed to get path", func(t *testing.T) {
+		body, err := json.Marshal(types.GeoPoint{LatLng: s2.LatLng{Lat: -1}})
+		assert.NoError(t, err)
+		request, _ := http.NewRequest(http.MethodPost, "/requests", bytes.NewBuffer(body))
+		response := httptest.NewRecorder()
+		rs.RequestPost(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
 }
 
 type mockBusStore bus.Bus
@@ -54,6 +81,9 @@ type mockPathFinder struct {
 }
 
 func (pf mockPathFinder) GetPath(bus bus.Bus, point types.GeoPoint) (string, error) {
+	if point.LatLng.Lat == -1 {
+		return "", errors.New("Bad ID")
+	}
 	return strconv.Itoa(bus.Id), nil
 }
 

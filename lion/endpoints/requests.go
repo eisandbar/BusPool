@@ -24,12 +24,14 @@ func (rs RequestServer) RequestPost(w http.ResponseWriter, r *http.Request) {
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&point)
 	if err != nil {
-
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	bus := rs.BusStore.FindBus(point)
 	path, err := rs.PathFinder.GetPath(bus, point)
 	if err != nil {
-
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	rs.Pub.Publish(bus, path)
 }
