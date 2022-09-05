@@ -21,23 +21,22 @@ func TestInitOne(t *testing.T) {
 	var want []string
 	for i := 0; i < 5; i++ { // 5 is a random number
 		time.Sleep(time.Millisecond) // Wait for InitOne
-		CheckCalls(t, &reporter, want)
+		reporter.Lock()
+		assert.Equal(t, []string{"Test"}, reporter.subscribes)
+		assert.Equal(t, want, reporter.reports)
+		assert.Equal(t, want, reporter.moves)
+		reporter.Unlock()
 		testChan <- time.Now()
 		want = append(want, "Test")
 	}
 	close(testChan)
 }
 
-func CheckCalls(t testing.TB, r *mockReportable, want interface{}) {
-	t.Helper()
-	r.Lock()
-	defer r.Unlock()
-	assert.Equal(t, want, r.calls)
-}
-
 type mockReportable struct {
-	s     string
-	calls []string
+	s          string
+	reports    []string
+	subscribes []string
+	moves      []string
 	sync.Mutex
 }
 
@@ -48,5 +47,17 @@ func (r *mockReportable) Id() string {
 func (r *mockReportable) Report(mqtt.Client) {
 	r.Lock()
 	defer r.Unlock()
-	r.calls = append(r.calls, r.s)
+	r.reports = append(r.reports, r.s)
+}
+
+func (r *mockReportable) Subscribe(mqtt.Client) {
+	r.Lock()
+	defer r.Unlock()
+	r.subscribes = append(r.subscribes, r.s)
+}
+
+func (r *mockReportable) Move() {
+	r.Lock()
+	defer r.Unlock()
+	r.moves = append(r.moves, r.s)
 }
