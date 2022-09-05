@@ -1,5 +1,7 @@
 github.com/eclipse/paho.mqtt.golang v1.4.1 h1:tUSpviiL5G3P9SZZJPC4ZULZJsxQKXxfENpMvdbAXAI=
 github.com/eclipse/paho.mqtt.golang v1.4.1/go.mod h1:JGt0RsEwEX+Xa/agj90YJ9d9DH2b7upDZMK9HRbFvCA=
+github.com/eisandbar/BusPool/bus v0.0.0-20220905212919-7d35be36bde9 h1:V8smoC9WzVEfxvWHlZA2TiwXRNh4u+SkXXA1X1rOWo0=
+github.com/eisandbar/BusPool/bus v0.0.0-20220905212919-7d35be36bde9/go.mod h1:Xfl3GxzWG6u8vb0Hw1349IPDjV9mBtRBAake0MTuVdQ=
 github.com/golang/geo v0.0.0-20210211234256-740aa86cb551 h1:gtexQ/VGyN+VVFRXSFiguSNcXmS6rkKT+X7FdIrTtfo=
 github.com/golang/geo v0.0.0-20210211234256-740aa86cb551/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
 github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=
