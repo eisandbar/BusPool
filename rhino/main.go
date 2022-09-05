@@ -8,12 +8,15 @@ import (
 )
 
 func main() {
+	fmt.Println("Initializing")
 	r := new(rhino)
 	r.Init()
 	defer r.Close()
 	r.InitTopic("bus-positions")
+	r.InitTopic("bus-positions-elastic")
 
 	// Connecting to mqtt
+	fmt.Println("Connecting to mqtt")
 	opts := mqtt.NewClientOptions().AddBroker("localhost:1883")
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
@@ -21,6 +24,7 @@ func main() {
 	}
 
 	// Subscribing to bus/positions mqtt topic
+	fmt.Println("Subcribing to topic")
 	if token := client.Subscribe("bus/positions", 0, r.positionHandler); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)

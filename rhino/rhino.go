@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/golang/geo/s2"
+	. "github.com/eisandbar/BusPool/bus/typing"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
@@ -55,52 +55,57 @@ func (r rhino) InitTopic(topic string) {
 }
 
 func (r rhino) positionHandler(client mqtt.Client, msg mqtt.Message) {
-	// Unmarshal bus data from mqtt message
-	var mBus mqttBus
-	err := json.Unmarshal(msg.Payload(), &mBus)
+	// Unmarshal data from mqtt message
+	var bus Bus
+	err := json.Unmarshal(msg.Payload(), &bus)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal payload from mqtt topic, %s\n", msg.Payload())
 	}
-	latlng := s2.LatLngFromPoint(mBus.Point)
 
 	// Transform data for later consumers
-	kBus := kafkaBus{
-		Id: mBus.Id,
-		Location: GeoPoint{
-			Lat: latlng.Lat.Degrees(), Lon: latlng.Lng.Degrees(), Type: "geo_point",
+	eBus := elasticBus{
+		ID:   bus.Id,
+		Time: bus.Time.UnixMilli(),
+		Location: geoPoint{
+			Lat: bus.Location.Lat.Degrees(),
+			Lon: bus.Location.Lng.Degrees(),
 		},
 	}
-	body, err := json.Marshal(kBus)
+	body, err := json.Marshal(eBus)
 	if err != nil {
-		log.Fatalf("Failed to marshal kafkaBus, %+v\n", kBus)
+		log.Fatalf("Failed to marshal kafkaBus, %+v\n", eBus)
 	}
 
 	// Adding data to kafka topic
 	var wg sync.WaitGroup
 	wg.Add(1)
-	record := &kgo.Record{Topic: "bus-positions", Value: body}
+	// Send raw data into bus-positions topic
+	record := &kgo.Record{Topic: "bus-positions", Value: msg.Payload()}
 	r.client.Produce(r.ctx, record, func(_ *kgo.Record, err error) {
 		defer wg.Done()
 		if err != nil {
 			log.Fatalf("record had a produce error: %v\n", err)
 		}
-
+	})
+	wg.Add(1)
+	// Send transformed data into topic for elastic
+	record = &kgo.Record{Topic: "bus-positions-elastic", Value: body}
+	r.client.Produce(r.ctx, record, func(_ *kgo.Record, err error) {
+		defer wg.Done()
+		if err != nil {
+			log.Fatalf("record had a produce error: %v\n", err)
+		}
 	})
 	wg.Wait()
 }
 
-type mqttBus struct {
-	Id int
-	s2.Point
+type geoPoint struct {
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
-type kafkaBus struct {
-	Id       int
-	Location GeoPoint `json:"location"`
-}
-
-type GeoPoint struct {
-	Type string  `json:"type"`
-	Lat  float64 `json:"lat"`
-	Lon  float64 `json:"lon"`
+type elasticBus struct {
+	ID       int      `json:"id"`
+	Time     int64    `json:"time"`
+	Location geoPoint `json:"location"`
 }
