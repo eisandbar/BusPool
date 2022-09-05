@@ -23,6 +23,9 @@ type DumbPathFinder struct {
 
 // Returns a polyline encoded array of coordinates
 func (pf DumbPathFinder) GetPath(points []s2.LatLng) ([]s2.LatLng, error) {
+	if len(points) == 0 {
+		return nil, nil
+	}
 	req := generateRequest(points)
 	resp, err := http.Post(fmt.Sprintf("%s/route", GraphHopper), "application/json", req)
 	if err != nil {
