@@ -27,12 +27,14 @@ func TestMove(t *testing.T) {
 			Path:         path,
 			Clients:      client,
 			Destinations: dest,
+			Occupancy:    1,
 		},
 		mockPathFinder{},
 	}
 	// Start
 	assert.Equal(t, start, testBus.Location)
 	assert.Equal(t, client, testBus.Clients)
+	assert.Equal(t, 1, testBus.Occupancy)
 
 	// Move 1
 	testBus.Move()
@@ -55,11 +57,13 @@ func TestMove(t *testing.T) {
 	// 1 Move wasted on pickup
 	testBus.Move()
 	assert.Equal(t, path[2], testBus.Location)
+	assert.Equal(t, 1, testBus.Occupancy)
 
 	// Reach destination
 	testBus.Move()
 	assert.Equal(t, dest[0], testBus.Location)
 	assert.Equal(t, []s2.LatLng{}, testBus.Destinations)
+	assert.Equal(t, 0, testBus.Occupancy)
 	assert.Equal(t, []s2.LatLng{}, testBus.Path) // No path left
 
 }
