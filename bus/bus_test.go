@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/eisandbar/BusPool/bus/typing"
 	"github.com/golang/geo/s2"
 	"github.com/stretchr/testify/assert"
 )
