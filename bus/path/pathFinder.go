@@ -65,7 +65,6 @@ func generateRequest(points []s2.LatLng) io.Reader {
 func getPoints(coords [][]float64) []s2.LatLng {
 	points := make([]s2.LatLng, len(coords))
 	for i, coord := range coords {
-		fmt.Println(coord)
 		points[i] = s2.LatLngFromDegrees(coord[1], coord[0]) // coords come as [lon, lat]
 	}
 	return points

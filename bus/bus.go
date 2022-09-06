@@ -15,13 +15,14 @@ import (
 	"github.com/golang/geo/s2"
 )
 
-const fleetSize = 20     // number of buses to initialize
+const fleetSize = 200    // number of buses to initialize
 const errAngle = 0.00015 // error allowance in coordinates
 
-func newBus(id int) *bus {
+func newBus(id int, coords [][]float64) *bus {
 	rand.Seed(time.Now().UnixMilli())
-	lat := 52.35 + rand.Float64()*0.3
-	lng := 13.1 + rand.Float64()*0.6
+	n := rand.Intn(len(coords))
+	lat := coords[n][0]
+	lng := coords[n][1]
 	location := s2.LatLngFromDegrees(lat, lng)
 	return &bus{
 		Bus: Bus{
@@ -107,6 +108,7 @@ func (b *bus) Move() {
 func (b *bus) requestHandler(client mqtt.Client, msg mqtt.Message) {
 	b.Lock()
 	defer b.Unlock()
+	log.Println("Received instructions for bus %d", b.Bus.Id)
 	var req Request
 	err := json.Unmarshal(msg.Payload(), &req)
 	if err != nil {
