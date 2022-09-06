@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	. "github.com/eisandbar/BusPool/lion/typing"
+	"github.com/golang/geo/s1"
 	"github.com/golang/geo/s2"
 )
 
@@ -38,12 +39,23 @@ func (bs *MemoryBusStore) FindBus(client s2.LatLng) (Bus, error) {
 	if len(bs.bus) == 0 {
 		return Bus{}, errors.New("No buses available")
 	}
-	res, dist := bs.bus[0], client.Distance(bs.bus[0].Location).Abs()
+
+	found := false
+
+	res, dist := Bus{}, s1.Angle(2)
 	for _, bus := range bs.bus {
-		if client.Distance(bus.Location).Abs() < dist {
+		if client.Distance(bus.Location).Abs() <= dist && bus.Occupancy < bus.Capacity {
+			found = true
 			res = bus
 			dist = client.Distance(bus.Location).Abs()
 		}
 	}
+
+	if !found {
+		return Bus{}, errors.New("No buses available")
+	}
+
+	res.Occupancy++
+	bs.bus[res.Id] = res
 	return res, nil
 }

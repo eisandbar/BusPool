@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/eisandbar/BusPool/lion/bus"
@@ -17,6 +18,7 @@ type RequestServer struct {
 
 // Handler for client requests
 func (rs RequestServer) RequestPost(w http.ResponseWriter, r *http.Request) {
+	log.Println("Processing request")
 	var req Request
 
 	decoder := json.NewDecoder(r.Body)
