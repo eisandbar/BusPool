@@ -34,7 +34,7 @@ func main() {
 	// Create Request Server
 	rs := endpoints.RequestServer{
 		BusStore: bs,
-		Pub:      publisher.EmptyPublisher{},
+		Pub:      publisher.NewMQTTPublisher(),
 	}
 
 	// Start http server
