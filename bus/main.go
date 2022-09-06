@@ -8,10 +8,11 @@ import (
 )
 
 func main() {
+	coords := internal.LoadData()
 
 	fmt.Println("Starting")
 	for i := 0; i < fleetSize; i++ {
-		go internal.InitOne(internal.NewClient(), newBus(i), time.Tick(time.Second))
+		go internal.InitOne(internal.NewClient(), newBus(i, coords), time.Tick(time.Second))
 	}
 
 	fmt.Println("Fleet initialized")
