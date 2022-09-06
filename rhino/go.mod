@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.1
 	github.com/eisandbar/BusPool/bus v0.0.0-20220905212919-7d35be36bde9
-	github.com/twmb/franz-go v1.6.0
+	github.com/twmb/franz-go v1.7.0
 	github.com/twmb/franz-go/pkg/kadm v1.2.0
 )
 

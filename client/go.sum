@@ -1,0 +1,6 @@
+github.com/eisandbar/BusPool/bus v0.0.0-20220906001113-63ea32695c53 h1:/LuRtN5+uejP6wgq6yS/DSwM3vdtggUDwgyiPEAJRbI=
+github.com/eisandbar/BusPool/bus v0.0.0-20220906001113-63ea32695c53/go.mod h1:Xfl3GxzWG6u8vb0Hw1349IPDjV9mBtRBAake0MTuVdQ=
+github.com/eisandbar/BusPool/lion v0.0.0-20220906064001-4a571f392052 h1:j5wMTmoKcr9kr92CSFVFxRimXDJl5QHc1ZBVBxiC1ZQ=
+github.com/eisandbar/BusPool/lion v0.0.0-20220906064001-4a571f392052/go.mod h1:lWVvpx+ajR3hoCuo92vwFFEuc5DjLmHqhhjWt5f/xPw=
+github.com/golang/geo v0.0.0-20210211234256-740aa86cb551 h1:gtexQ/VGyN+VVFRXSFiguSNcXmS6rkKT+X7FdIrTtfo=
+github.com/golang/geo v0.0.0-20210211234256-740aa86cb551/go.mod h1:QZ0nwyI2jOfgRAoBvP+ab5aRr7c9x7lhGEJrKvBwjWI=
