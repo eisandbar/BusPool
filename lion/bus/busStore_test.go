@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/eisandbar/BusPool/lion/bus"
-	"github.com/eisandbar/BusPool/lion/types"
+	. "github.com/eisandbar/BusPool/lion/typing"
 	"github.com/golang/geo/s2"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,26 +12,26 @@ import (
 func TestFindBus(t *testing.T) {
 	bs := bus.NewMemoryBusStore()
 
-	_, err := bs.FindBus(types.GeoPoint{})
+	_, err := bs.FindBus(s2.LatLng{})
 	assert.Error(t, err)
 
-	buses := []bus.Bus{
-		{Id: 1, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(19, 13)}},
-		{Id: 2, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(21, 15)}},
-		{Id: 3, Location: types.GeoPoint{LatLng: s2.LatLngFromDegrees(22, 22)}},
+	buses := []Bus{
+		{Id: 1, Location: s2.LatLngFromDegrees(19, 13)},
+		{Id: 2, Location: s2.LatLngFromDegrees(21, 15)},
+		{Id: 3, Location: s2.LatLngFromDegrees(22, 22)},
 	}
 	for _, bus := range buses {
 		bs.Store(bus)
 	}
 
 	testData := []struct {
-		point types.GeoPoint
+		point s2.LatLng
 		id    int
 	}{
-		{point: types.GeoPoint{LatLng: s2.LatLngFromDegrees(22, 16)}, id: 2},
-		{point: types.GeoPoint{LatLng: s2.LatLngFromDegrees(22, 13)}, id: 2},
-		{point: types.GeoPoint{LatLng: s2.LatLngFromDegrees(15, 13)}, id: 1},
-		{point: types.GeoPoint{LatLng: s2.LatLngFromDegrees(21, 21)}, id: 3},
+		{point: s2.LatLngFromDegrees(22, 16), id: 2},
+		{point: s2.LatLngFromDegrees(22, 13), id: 2},
+		{point: s2.LatLngFromDegrees(15, 13), id: 1},
+		{point: s2.LatLngFromDegrees(21, 21), id: 3},
 	}
 
 	for _, tt := range testData {
