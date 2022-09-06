@@ -3,6 +3,7 @@ module github.com/eisandbar/BusPool/lion
 go 1.19
 
 require (
+	github.com/eisandbar/BusPool/bus v0.0.0-20220906001113-63ea32695c53
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/gorilla/mux v1.8.0
 	github.com/rs/cors v1.8.2

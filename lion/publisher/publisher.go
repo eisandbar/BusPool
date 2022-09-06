@@ -3,16 +3,16 @@ package publisher
 import (
 	"fmt"
 
-	"github.com/eisandbar/BusPool/lion/bus"
+	. "github.com/eisandbar/BusPool/lion/typing"
 )
 
 type Publisher interface {
-	Publish(bus.Bus, string)
+	Publish(Bus, Instruction)
 }
 
 type EmptyPublisher struct {
 }
 
-func (pub EmptyPublisher) Publish(bus bus.Bus, path string) {
-	fmt.Println(bus, path)
+func (pub EmptyPublisher) Publish(bus Bus, inst Instruction) {
+	fmt.Println(bus, inst)
 }

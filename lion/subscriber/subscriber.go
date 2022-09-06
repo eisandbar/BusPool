@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/eisandbar/BusPool/lion/bus"
+
+	. "github.com/eisandbar/BusPool/lion/typing"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -51,7 +53,7 @@ func (sub Subscriber) Subscribe(topic string) {
 		// Update bus positions in bus store
 		fetches.EachPartition(func(p kgo.FetchTopicPartition) {
 			p.EachRecord(func(record *kgo.Record) {
-				bus := bus.Bus{}
+				bus := Bus{}
 				err := json.Unmarshal(record.Value, &bus)
 				if err != nil {
 					fmt.Printf("Error unmarshalling bus: %s, %+v\n", err, bus)

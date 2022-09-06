@@ -7,7 +7,6 @@ import (
 
 	"github.com/eisandbar/BusPool/lion/bus"
 	"github.com/eisandbar/BusPool/lion/endpoints"
-	"github.com/eisandbar/BusPool/lion/path"
 	"github.com/eisandbar/BusPool/lion/publisher"
 	"github.com/eisandbar/BusPool/lion/subscriber"
 	"github.com/gorilla/mux"
@@ -34,9 +33,8 @@ func main() {
 
 	// Create Request Server
 	rs := endpoints.RequestServer{
-		BusStore:   bs,
-		PathFinder: path.DumbPathFinder{},
-		Pub:        publisher.EmptyPublisher{},
+		BusStore: bs,
+		Pub:      publisher.EmptyPublisher{},
 	}
 
 	// Start http server
