@@ -1,7 +1,6 @@
 package typing
 
 import (
-	"sync"
 	"time"
 
 	"github.com/golang/geo/s2"
@@ -16,5 +15,4 @@ type Bus struct {
 	Clients      []s2.LatLng // Clients that still need to be picked up
 	Destinations []s2.LatLng // Client drop-off locations
 	Path         []s2.LatLng
-	sync.RWMutex
 }
