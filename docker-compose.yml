@@ -1,7 +1,9 @@
 ---
 version: '3'
+
 services:
   mosquitto:
+    restart: on-failure
     image: eclipse-mosquitto:2.0.15
     container_name: mosquitto
     volumes:
@@ -10,13 +12,15 @@ services:
       - "1883:1883"
 
   zookeeper:
-      image: confluentinc/cp-zookeeper:7.0.1
-      container_name: zookeeper
-      environment:
-        ZOOKEEPER_CLIENT_PORT: 2181
-        ZOOKEEPER_TICK_TIME: 2000
+    restart: on-failure
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   broker:
+    restart: on-failure
     image: confluentinc/cp-kafka:7.0.1
     container_name: broker
     ports:
@@ -33,6 +37,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
   schema-registry:
+    restart: on-failure
     image: confluentinc/cp-schema-registry:7.0.1
     hostname: schema-registry
     container_name: schema-registry
@@ -46,6 +51,7 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
   connect:
+    restart: on-failure
     build: 
       dockerfile: ./kafka/Dockerfile
     container_name: connect
@@ -74,11 +80,15 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
   elastic:
+    restart: on-failure
     image: docker.elastic.co/elasticsearch/elasticsearch:8.4.0
     container_name: es-node01
     ports:
       - "9200:9200"
       - "9300:9300"
+    networks:
+      - elastic
+      - default
     volumes:
       - esdata:/usr/share/elasticsearch/data
       - ./certs:/usr/share/elasticsearch/config/certs
@@ -87,12 +97,16 @@ services:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:?err}
       
   kibana:
+    restart: on-failure
     image: docker.elastic.co/kibana/kibana:8.4.0
     container_name: kib-01
     ports:
       - "5601:5601"
+    networks:
+      - elastic
 
   graphHopper:
+    restart: on-failure
     image: israelhikingmap/graphhopper
     container_name: graph
     command: --host 0.0.0.0
@@ -106,3 +120,7 @@ services:
 volumes:
   esdata:
     driver: local
+
+networks:
+  elastic:
+  
