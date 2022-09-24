@@ -16,9 +16,9 @@ func TestFindBus(t *testing.T) {
 	assert.Error(t, err)
 
 	buses := []Bus{
-		{Id: 1, Location: s2.LatLngFromDegrees(19, 13)},
-		{Id: 2, Location: s2.LatLngFromDegrees(21, 15)},
-		{Id: 3, Location: s2.LatLngFromDegrees(22, 22)},
+		{Id: 1, Location: s2.LatLngFromDegrees(19, 13), Capacity: 6},
+		{Id: 2, Location: s2.LatLngFromDegrees(21, 15), Capacity: 6},
+		{Id: 3, Location: s2.LatLngFromDegrees(22, 22), Capacity: 6},
 	}
 	for _, bus := range buses {
 		bs.Store(bus)
