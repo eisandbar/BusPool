@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	file   = "../data/export.geojson"         // file with bus stop data
-	server = "http://localhost:3333/requests" // Request server
-	N      = 300                              // How often to generate a request in milliseconds
+	file   = "data/export.geojson"       // file with bus stop data
+	server = "http://lion:3333/requests" // Request server
+	N      = 600                         // How often to generate a request in milliseconds
 )
 
 func main() {
@@ -32,7 +32,10 @@ func main() {
 				log.Fatalf("Failed to send request, %s", err)
 			}
 			buf := new(strings.Builder)
-			io.Copy(buf, resp.Body)
+			_, err = io.Copy(buf, resp.Body)
+			if err != nil {
+				log.Printf("Failed to read response, %s", err)
+			}
 			fmt.Println(resp.StatusCode, buf.String())
 		} else {
 			continue

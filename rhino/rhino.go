@@ -12,7 +12,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-var seeds = []string{"localhost:9092"}
+var seeds = []string{"broker:9092"}
 
 type rhino struct {
 	client *kgo.Client

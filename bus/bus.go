@@ -17,6 +17,7 @@ import (
 
 const fleetSize = 200    // number of buses to initialize
 const errAngle = 0.00015 // error allowance in coordinates
+const busCapacity = 12
 
 func newBus(id int, coords [][]float64) *bus {
 	rand.Seed(time.Now().UnixMilli())
@@ -27,7 +28,7 @@ func newBus(id int, coords [][]float64) *bus {
 	return &bus{
 		Bus: Bus{
 			Id:        id,
-			Capacity:  6,
+			Capacity:  busCapacity,
 			Occupancy: 0,
 			Location:  location,
 			Path:      []s2.LatLng{location},
@@ -108,7 +109,7 @@ func (b *bus) Move() {
 func (b *bus) requestHandler(client mqtt.Client, msg mqtt.Message) {
 	b.Lock()
 	defer b.Unlock()
-	log.Println("Received instructions for bus %d", b.Bus.Id)
+	log.Printf("Received instructions for bus %d", b.Bus.Id)
 	var req Request
 	err := json.Unmarshal(msg.Payload(), &req)
 	if err != nil {

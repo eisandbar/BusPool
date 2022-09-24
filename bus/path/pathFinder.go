@@ -11,7 +11,7 @@ import (
 	"github.com/golang/geo/s2"
 )
 
-var GraphHopper = "http://localhost:8989"
+var GraphHopper = "http://graphHopper:8989"
 
 type PathFinder interface {
 	GetPath([]s2.LatLng) ([]s2.LatLng, error)

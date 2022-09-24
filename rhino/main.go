@@ -7,6 +7,8 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+const mosquittoServer = "mosquitto:1883"
+
 func main() {
 	fmt.Println("Initializing")
 	r := new(rhino)
@@ -17,7 +19,7 @@ func main() {
 
 	// Connecting to mqtt
 	fmt.Println("Connecting to mqtt")
-	opts := mqtt.NewClientOptions().AddBroker("localhost:1883")
+	opts := mqtt.NewClientOptions().AddBroker(mosquittoServer)
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
