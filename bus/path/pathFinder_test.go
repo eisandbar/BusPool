@@ -1,6 +1,7 @@
 package path_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/eisandbar/BusPool/bus/path"
@@ -10,6 +11,10 @@ import (
 
 // This is an integration test with GraphHopper
 func TestGetPath(t *testing.T) {
+	if os.Getenv("TEST_ENV") != "ci" {
+		t.Log("Skipping test as it's CI only")
+		return
+	}
 	points := []s2.LatLng{
 		s2.LatLngFromDegrees(52.52, 13.37),
 		s2.LatLngFromDegrees(52.519, 13.37),
