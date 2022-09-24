@@ -32,7 +32,10 @@ func main() {
 				log.Fatalf("Failed to send request, %s", err)
 			}
 			buf := new(strings.Builder)
-			io.Copy(buf, resp.Body)
+			_, err = io.Copy(buf, resp.Body)
+			if err != nil {
+				log.Printf("Failed to read response, %s", err)
+			}
 			fmt.Println(resp.StatusCode, buf.String())
 		} else {
 			continue

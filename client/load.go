@@ -9,10 +9,10 @@ import (
 
 func loadData(file string) [][]float64 {
 	dataFile, err := os.Open(file)
-	defer dataFile.Close()
 	if err != nil {
 		log.Fatalf("Failed to open data file, %s", err)
 	}
+	defer dataFile.Close()
 
 	byteData, err := io.ReadAll(dataFile)
 	if err != nil {
@@ -20,7 +20,10 @@ func loadData(file string) [][]float64 {
 	}
 
 	var geoData geoJson
-	json.Unmarshal(byteData, &geoData)
+	err = json.Unmarshal(byteData, &geoData)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal geojson, %s", err)
+	}
 
 	coordinates := make([][]float64, len(geoData.Features))
 	for i, feature := range geoData.Features {
