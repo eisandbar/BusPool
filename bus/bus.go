@@ -109,7 +109,7 @@ func (b *bus) Move() {
 func (b *bus) requestHandler(client mqtt.Client, msg mqtt.Message) {
 	b.Lock()
 	defer b.Unlock()
-	log.Println("Received instructions for bus %d", b.Bus.Id)
+	log.Printf("Received instructions for bus %d", b.Bus.Id)
 	var req Request
 	err := json.Unmarshal(msg.Payload(), &req)
 	if err != nil {
