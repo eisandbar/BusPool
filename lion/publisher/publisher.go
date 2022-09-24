@@ -10,6 +10,8 @@ import (
 	. "github.com/eisandbar/BusPool/lion/typing"
 )
 
+const mosquittoServer = "mosquitto:1883"
+
 type Publisher interface {
 	Publish(Bus, Instruction)
 }
@@ -33,7 +35,7 @@ func (pub MQTTPublisher) Publish(bus Bus, inst Instruction) {
 }
 
 func NewClient() mqtt.Client {
-	opts := mqtt.NewClientOptions().AddBroker("localhost:1883")
+	opts := mqtt.NewClientOptions().AddBroker(mosquittoServer)
 	opts.SetKeepAlive(2 * time.Second)
 	opts.SetPingTimeout(1 * time.Second)
 	client := mqtt.NewClient(opts)

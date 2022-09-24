@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	file = "../data/export.geojson"
+	file = "data/export.geojson"
 )
 
 func LoadData() [][]float64 {

@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	file   = "../data/export.geojson"         // file with bus stop data
-	server = "http://localhost:3333/requests" // Request server
-	N      = 300                              // How often to generate a request in milliseconds
+	file   = "data/export.geojson"       // file with bus stop data
+	server = "http://lion:3333/requests" // Request server
+	N      = 600                         // How often to generate a request in milliseconds
 )
 
 func main() {

@@ -31,7 +31,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -116,6 +116,38 @@ services:
       - 8989:8989
     environment:
       - FILE=maps/data.pbf
+
+  bus:
+    restart: on-failure
+    build: ./bus
+    depends_on:
+      - mosquitto
+    volumes:
+      - ./data:/bus/data
+
+  rhino:
+    restart: on-failure
+    build: ./rhino
+    depends_on:
+      - mosquitto
+      - broker
+  
+  lion: 
+    restart: on-failure
+    build: ./lion
+    depends_on:
+      - bus
+      - broker
+      - mosquitto
+  
+  client:
+    restart: on-failure
+    build: ./client
+    depends_on:
+      - lion
+    volumes:
+      - ./data:/client/data
+    
 
 volumes:
   esdata:
