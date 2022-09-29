@@ -6,6 +6,7 @@ services:
     restart: on-failure
     image: eclipse-mosquitto:2.0.15
     container_name: mosquitto
+    profiles: ["base"]
     volumes:
       - ./mosquitto:/mosquitto/config
     ports:
@@ -15,6 +16,7 @@ services:
     restart: on-failure
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper
+    profiles: ["base"]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -23,6 +25,7 @@ services:
     restart: on-failure
     image: confluentinc/cp-kafka:7.0.1
     container_name: broker
+    profiles: ["base"]
     ports:
       - "9091:9091"
     depends_on:
@@ -42,6 +45,7 @@ services:
     image: confluentinc/cp-schema-registry:7.0.1
     hostname: schema-registry
     container_name: schema-registry
+    profiles: ["connect-elastic"]
     depends_on:
       - broker
     ports:
@@ -56,6 +60,7 @@ services:
     build: 
       dockerfile: ./kafka/Dockerfile
     container_name: connect
+    profiles: ["connect-elastic"]
     ports: 
       - "8083:8083"
     volumes:
@@ -84,6 +89,7 @@ services:
     restart: on-failure
     image: docker.elastic.co/elasticsearch/elasticsearch:8.4.0
     container_name: es-node01
+    profiles: ["connect-elastic"]
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -92,15 +98,17 @@ services:
       - default
     volumes:
       - esdata:/usr/share/elasticsearch/data
-      - ./certs:/usr/share/elasticsearch/config/certs
-      - ./elastic/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:?err}
+      - ELASTIC_PASSWORD=${EP:-password}
+      - node.name=es-node01
+      - cluster.initial_master_nodes=es-node01
+      - xpack.security.enabled=false
       
   kibana:
     restart: on-failure
     image: docker.elastic.co/kibana/kibana:8.4.0
     container_name: kib-01
+    profiles: ["connect-elastic"]
     ports:
       - "5601:5601"
     networks:
@@ -110,6 +118,7 @@ services:
     restart: on-failure
     image: israelhikingmap/graphhopper
     container_name: graph
+    profiles: ["base"]
     command: --host 0.0.0.0
     volumes:
       - ./graphhopper/maps:/graphhopper/maps
@@ -121,6 +130,7 @@ services:
   bus:
     restart: on-failure
     build: ./bus
+    profiles: ["base"]
     depends_on:
       - graphHopper
       - mosquitto
@@ -130,6 +140,7 @@ services:
   rhino:
     restart: on-failure
     build: ./rhino
+    profiles: ["base"]
     depends_on:
       - mosquitto
       - broker
@@ -137,7 +148,9 @@ services:
   lion: 
     restart: on-failure
     build: ./lion
+    profiles: ["base"]
     depends_on:
+      - rhino
       - bus
       - broker
       - mosquitto
@@ -145,6 +158,7 @@ services:
   client:
     restart: on-failure
     build: ./client
+    profiles: ["client"]
     depends_on:
       - lion
     volumes:
