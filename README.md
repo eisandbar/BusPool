@@ -1,6 +1,6 @@
 # BusPool
-A bus pooling system for optimized public transport
-
+A bus pooling system for optimized public transport.\
+[Setup](https://github.com/eisandbar/BusPool/blob/e52ed83157234dc163576f22fc8de8fa575de9ee/Setup.md)
 ## Structure
 
 ### Bus
