@@ -4,3 +4,5 @@ elastic/
 gazelle/
 graphhopper/
 usefulJson.txt
+web/node_modules/
+web/web/node_modules/
